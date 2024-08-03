@@ -1,0 +1,701 @@
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة مؤشر كتلة الجسم (BMI)  </title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #f39c12;
+  --accent-color: #e74c3c;
+  --text-color: #333;
+  --bg-color: #f0f0f0;
+  --card-bg: #ffffff;
+  --male-color: #3498db;
+  --female-color: #e74c3c;
+}
+
+body {
+  font-family: 'Tajawal', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffecd2, #fcb69f);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: var(--text-color);
+  direction: rtl;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin-bottom: 30px;
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+  transform: rotate(30deg);
+  transition: all 0.5s ease;
+  opacity: 0;
+}
+
+.card:hover::before {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+h1, h2 {
+  color: var(--primary-color);
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.gender-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.gender-toggle button {
+  background-color: var(--bg-color);
+  border: none;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 50px;
+  margin: 0 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.gender-toggle button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s ease;
+}
+
+.gender-toggle button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.gender-toggle button.active.male {
+  background-color: var(--male-color);
+  color: white;
+}
+
+.gender-toggle button.active.female {
+  background-color: var(--female-color);
+  color: white;
+}
+
+.slider-container {
+  margin-bottom: 20px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider::-webkit-slider-thumb:hover,
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.slider-value {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 10px;
+}
+
+.calculate-btn {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.calculate-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s ease;
+}
+
+.calculate-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.calculate-btn:hover {
+  background-color: #3476c5;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.calculate-btn:active {
+  transform: translateY(-1px);
+}
+
+.result {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 30px;
+  opacity: 0;
+  transition: all 0.5s ease;
+  transform: translateY(20px);
+}
+
+.result.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bmi-scale {
+  height: 30px;
+  background: linear-gradient(to left, #4caf50, #f9d62e, #fc913a, #ff4e50);
+  border-radius: 15px;
+  margin-top: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bmi-marker {
+  width: 20px;
+  height: 40px;
+  background-color: #333;
+  position: absolute;
+  top: -5px;
+  transform: translateX(-50%);
+  transition: left 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  border-radius: 10px;
+}
+
+.bmi-categories {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ideal-weight {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.health-tips {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.health-tips h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.health-tips ul {
+  padding-left: 20px;
+}
+
+.health-tips li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.faq-item {
+  margin-bottom: 20px;
+}
+
+.faq-question {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 15px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.faq-question::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s ease;
+}
+
+.faq-question:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.faq-answer {
+  display: none;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 0 0 10px 10px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.share-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.share-buttons button {
+  margin: 0 10px;
+  padding: 15px 30px;
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 700;
+  position: relative;
+  overflow: hidden;
+}
+
+.share-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s ease;
+}
+
+.share-buttons button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.share-buttons button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: var(--bg-color);
+  border: none;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  font-size: 20px;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1) rotate(15deg);
+}
+
+.dark-mode {
+  --primary-color: #bb86fc;
+  --secondary-color: #03dac6;
+  --text-color: #ffffff;
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@media (max-width: 600px) {
+  .gender-toggle {
+    flex-direction: column;
+  }
+  
+  .gender-toggle button {
+    margin-bottom: 10px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="fade-in">حاسبة مؤشر كتلة الجسم (BMI) </h1>
+  
+  <div class="card fade-in">
+    <div class="gender-toggle">
+      <button class="male active">ذكر</button>
+      <button class="female">أنثى</button>
+    </div>
+    
+    <div class="slider-container">
+      <label for="height-slider">الطول (سم)</label>
+      <input type="range" min="100" max="220" value="170" class="slider" id="height-slider">
+      <div class="slider-value" id="height-value">170 سم</div>
+    </div>
+    
+    <div class="slider-container">
+      <label for="weight-slider">الوزن (كجم)</label>
+      <input type="range" min="30" max="200" value="70" class="slider" id="weight-slider">
+      <div class="slider-value" id="weight-value">70 كجم</div>
+    </div>
+    
+    <button class="calculate-btn">احسب مؤشر كتلة الجسم</button>
+    
+    <div class="result">
+      <p>مؤشر كتلة الجسم الخاص بك هو: <span id="bmi-value"></span></p>
+      <p>الفئة: <span id="bmi-category"></span></p>
+    </div>
+    
+    <div class="bmi-scale">
+      <div class="bmi-marker"></div>
+    </div>
+    
+    <div class="bmi-categories">
+      <span>نقص وزن</span>
+      <span>وزن طبيعي</span>
+      <span>زيادة وزن</span>
+      <span>سمنة</span>
+    </div>
+    
+    <div class="ideal-weight"></div>
+  </div>
+  
+  <div class="card fade-in">
+    <h2>نصائح صحية مهمة</h2>
+    <div class="health-tips">
+      <h3>نصائح عامة للصحة والعافية:</h3>
+      <ul id="health-tips-list">
+        <!-- النصائح ستضاف هنا بواسطة JavaScript -->
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card fade-in">
+    <h2>الأسئلة الشائعة</h2>
+    <div class="faq-item">
+      <div class="faq-question">ما هو مؤشر كتلة الجسم (BMI)؟</div>
+      <div class="faq-answer">
+        مؤشر كتلة الجسم هو مقياس يستخدم الطول والوزن لتقدير كمية الدهون في الجسم. إنه أداة مفيدة لتقييم ما إذا كان الشخص يعاني من نقص الوزن أو زيادة الوزن أو السمنة.
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">كيف يتم حساب مؤشر كتلة الجسم؟</div>
+      <div class="faq-answer">
+        يتم حساب مؤشر كتلة الجسم بقسمة وزن الشخص بالكيلوجرام على مربع طوله بالمتر. الصيغة هي: BMI = الوزن (كجم) / (الطول (م))².
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">ما هي فئات مؤشر كتلة الجسم؟</div>
+      <div class="faq-answer">
+        فئات مؤشر كتلة الجسم للبالغين هي:
+        <ul>
+          <li>أقل من 18.5: نقص الوزن</li>
+          <li>18.5 - 24.9: وزن طبيعي</li>
+          <li>25 - 29.9: زيادة الوزن</li>
+          <li>30 أو أكثر: سمنة</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="share-buttons fade-in">
+    <button id="share-facebook">شارك على فيسبوك</button>
+    <button id="share-twitter">شارك على تويتر</button>
+  </div>
+</div>
+
+<button class="theme-toggle">🌓</button>
+
+<script>
+const heightSlider = document.getElementById('height-slider');
+const weightSlider = document.getElementById('weight-slider');
+const heightValue = document.getElementById('height-value');
+const weightValue = document.getElementById('weight-value');
+const calculateBtn = document.querySelector('.calculate-btn');
+const result = document.querySelector('.result');
+const bmiValue = document.getElementById('bmi-value');
+const bmiCategory = document.getElementById('bmi-category');
+const bmiMarker = document.querySelector('.bmi-marker');
+const idealWeight = document.querySelector('.ideal-weight');
+const maleBtn = document.querySelector('.gender-toggle .male');
+const femaleBtn = document.querySelector('.gender-toggle .female');
+const faqQuestions = document.querySelectorAll('.faq-question');
+const shareFacebook = document.getElementById('share-facebook');
+const shareTwitter = document.getElementById('share-twitter');
+const themeToggle = document.querySelector('.theme-toggle');
+const healthTipsList = document.getElementById('health-tips-list');
+
+let isMale = true;
+
+heightSlider.addEventListener('input', updateHeightValue);
+weightSlider.addEventListener('input', updateWeightValue);
+calculateBtn.addEventListener('click', calculateBMI);
+maleBtn.addEventListener('click', () => setGender(true));
+femaleBtn.addEventListener('click', () => setGender(false));
+
+faqQuestions.forEach(question => {
+  question.addEventListener('click', () => {
+    const answer = question.nextElementSibling;
+    answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+  });
+});
+
+shareFacebook.addEventListener('click', () => {
+  const url = encodeURIComponent(window.location.href);
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+});
+
+shareTwitter.addEventListener('click', () => {
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent('تحقق من نتيجة مؤشر كتلة الجسم الخاص بي!');
+  window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+});
+
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+});
+
+function updateHeightValue() {
+  heightValue.textContent = `${heightSlider.value} سم`;
+}
+
+function updateWeightValue() {
+  weightValue.textContent = `${weightSlider.value} كجم`;
+}
+
+function setGender(male) {
+  isMale = male;
+  maleBtn.classList.toggle('active', male);
+  femaleBtn.classList.toggle('active', !male);
+  
+  if (male) {
+    document.documentElement.style.setProperty('--primary-color', '#3498db');
+  } else {
+    document.documentElement.style.setProperty('--primary-color', '#e74c3c');
+  }
+}
+
+function calculateBMI() {
+  let height = parseFloat(heightSlider.value);
+  let weight = parseFloat(weightSlider.value);
+  
+  let bmi = weight / ((height / 100) ** 2);
+  bmi = bmi.toFixed(1);
+  bmiValue.textContent = bmi;
+  
+  let category;
+  if (bmi < 18.5) {
+    category = 'نقص الوزن';
+  } else if (bmi < 25) {
+    category = 'وزن طبيعي';
+  } else if (bmi < 30) {
+    category = 'زيادة الوزن';
+  } else {
+    category = 'سمنة';
+  }
+  
+  bmiCategory.textContent = category;
+  
+  const markerPosition = ((bmi - 15) / (40 - 15)) * 100;
+  bmiMarker.style.right = `${Math.min(Math.max(markerPosition, 0), 100)}%`;
+  
+  result.classList.add('show');
+  
+  calculateIdealWeight(height);
+  updateHealthTips(category);
+}
+
+function calculateIdealWeight(height) {
+  let minWeight, maxWeight;
+  
+  if (isMale) {
+    minWeight = 18.5 * ((height / 100) ** 2);
+    maxWeight = 24.9 * ((height / 100) ** 2);
+  } else {
+    minWeight = 18.5 * ((height / 100) ** 2) - 1;
+    maxWeight = 24.9 * ((height / 100) ** 2) - 1;
+  }
+  
+  idealWeight.textContent = `الوزن المثالي: ${minWeight.toFixed(1)} - ${maxWeight.toFixed(1)} كجم`;
+}
+
+function updateHealthTips(category) {
+  const generalTips = [
+    'اشرب كمية كافية من الماء يومياً (8-10 أكواب)',
+    'مارس الرياضة بانتظام (30 دقيقة على الأقل 5 أيام في الأسبوع)',
+    'تناول وجبات متوازنة تحتوي على الخضروات والفواكه والبروتينات والحبوب الكاملة',
+    'احصل على قسط كافٍ من النوم (7-9 ساعات يومياً)',
+    'قلل من تناول الأطعمة المصنعة والسكريات المضافة',
+    'تعامل مع الضغوط النفسية من خلال ممارسة التأمل أو اليوغا'
+  ];
+
+  const specificTips = {
+    'نقص الوزن': [
+      'زيادة تناول السعرات الحرارية بشكل صحي',
+      'تناول وجبات غنية بالبروتين والكربوهيدرات المعقدة',
+      'استشارة أخصائي تغذية لوضع خطة غذائية مناسبة',
+      'ممارسة تمارين بناء العضلات'
+    ],
+    'وزن طبيعي': [
+      'الحفاظ على نمط الحياة الصحي الحالي',
+      'تنويع الأنشطة الرياضية للحفاظ على اللياقة البدنية',
+      'الاستمرار في تناول الأطعمة الصحية والمتوازنة',
+      'إجراء فحوصات طبية دورية للاطمئنان على الصحة العامة'
+    ],
+    'زيادة الوزن': [
+      'تقليل حجم الوجبات وزيادة عدد الوجبات الخفيفة الصحية',
+      'زيادة تناول الألياف لتعزيز الشعور بالشبع',
+      'ممارسة تمارين الكارديو بانتظام',
+      'تجنب الأكل العاطفي والتركيز على الأكل الواعي'
+    ],
+    'سمنة': [
+      'استشارة الطبيب لوضع خطة لإنقاص الوزن بشكل آمن',
+      'تقليل السعرات الحرارية اليومية مع الحفاظ على التغذية المتوازنة',
+      'زيادة النشاط البدني تدريجياً',
+      'الانضمام إلى مجموعات دعم أو برامج إنقاص الوزن',
+      'مراقبة مستويات الضغط والسكر في الدم بانتظام'
+    ]
+  };
+
+  // إضافة النصائح العامة
+  healthTipsList.innerHTML = generalTips.map(tip => `<li>${tip}</li>`).join('');
+
+  // إضافة النصائح الخاصة بفئة الوزن
+  if (specificTips[category]) {
+    healthTipsList.innerHTML += specificTips[category].map(tip => `<li>${tip}</li>`).join('');
+  }
+}
+
+// Add fade-in effect to elements
+document.addEventListener('DOMContentLoaded', () => {
+  const fadeElements = document.querySelectorAll('.fade-in');
+  fadeElements.forEach((element, index) => {
+    setTimeout(() => {
+      element.style.opacity = '1';
+      element.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+});
+
+// Initialize slider values
+updateHeightValue();
+updateWeightValue();
+</script>
+
+</body></html>
